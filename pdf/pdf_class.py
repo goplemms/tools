@@ -1,10 +1,21 @@
-class PdfClass:
-    def __init__(self, file_path=None):
-        from PyPDF3 import PdfFileReader
-        self.__file_path = file_path
-        self.__pdf = PdfFileReader(self.__file_path)
+from typing import AnyStr, Callable
+from os import path
+
+class FileMonad:
+    def __init__(self, file_descriptor, mode:str=''):
+        self.__file_descriptor = file_descriptor
+        self.__opened_file = None
 
 
-    def write(self, file_path:str):
-        from PyPDF3 import PdfFileWriter
-        PdfFileWriter().write(self.__pdf.stream)
+    def __del__(self):
+        if self.__opened_file is not None:
+            self.__opened_file.close()
+
+
+    def bind(self, f: Callable) -> 'FileMonad':
+        if self.__opened_file is None:
+            self.__opened_file = open(self.__file_descriptor)
+
+        try:
+            result = f(self.__opened_file)
+            return
