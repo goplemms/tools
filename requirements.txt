@@ -1,0 +1,4 @@
+colorama==0.4.6
+Pillow==9.4.0
+PyPDF3==1.0.6
+tqdm==4.64.1
